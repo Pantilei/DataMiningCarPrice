@@ -17,3 +17,13 @@ class ParseHTML():
             return str(ex)
 
         return page
+
+    def get_product_urls(self):
+        try:
+            products = self.soup_html.find_all(
+                class_="ads-list-photo-item-title")
+            product_hrefs = [product.find("a")["href"] for product in products]
+
+            return product_hrefs
+        except Exception as ex:
+            return str(ex)
