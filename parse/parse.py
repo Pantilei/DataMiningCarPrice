@@ -141,7 +141,7 @@ class ParseHTML():
             return str(ex)
 
 
-with open("test.html", "r", encoding='UTF-8') as f:
-    html = f.read()
-    html_obj = ParseHTML(html)
-    print(html_obj.get_product_data())
+# with open("test.html", "r", encoding='UTF-8') as f:
+#     html = f.read()
+#     html_obj = ParseHTML(html)
+#     print(html_obj.get_product_data())
