@@ -1,12 +1,13 @@
 import asyncio
-import aiohttp
-import logging
+from aiohttp import ClientSession
+from logging import Logger
+from typing import Coroutine, Optional
 import traceback
 
-_logger = logging.Logger(__name__)
+_logger: Logger = Logger(__name__)
 
 
-async def fetch(session, url):
+async def fetch(session: ClientSession, url: str) -> str:
     """Fetches given url and session object
 
     :param session: aiohttp object
@@ -25,17 +26,17 @@ async def fetch(session, url):
         return str(ex)
 
 
-async def fetch_html(url):
+async def fetch_html(url: str) -> str:
     """Fetch the url
 
-    :param url: Endpoint to fech
+    :param url: Endpoint to fetch
     :type url: str
     :return: Fetched html
     :rtype: str
     """
     try:
-        async with aiohttp.ClientSession() as session:
-            html = await fetch(session, url)
+        async with ClientSession() as session:
+            html: Coroutine[str] = await fetch(session, url)
 
             return html
     except Exception as ex:
@@ -43,7 +44,7 @@ async def fetch_html(url):
         return str(ex)
 
 
-async def fetch_all(urls):
+async def fetch_all(urls: list[str]) -> list[str]:
     """Fetch list of urls
 
     :param urls: List of urls
@@ -52,7 +53,7 @@ async def fetch_all(urls):
     :rtype: list
     """
     try:
-        htmls = await asyncio.gather(*[fetch_html(url) for url in urls])
+        htmls: Coroutine[list[str]] = await asyncio.gather(*[fetch_html(url) for url in urls])
 
         return htmls
     except Exception as ex:
@@ -60,7 +61,7 @@ async def fetch_all(urls):
         return str(ex)
 
 
-async def fetch_all_batch(urls, batch=50):
+async def fetch_all_batch(urls: list[str], batch: Optional[int] = 50) -> list[str]:
     """Fetch the urls in baches
 
     :param urls: list of urls to be feched
@@ -71,10 +72,10 @@ async def fetch_all_batch(urls, batch=50):
     :rtype: list
     """
     try:
-        all_htmls = []
-        num_of_urls = len(urls)
+        all_htmls: list[Optional[str]] = []
+        num_of_urls: int = len(urls)
         for j in range(0, num_of_urls+batch, batch):
-            step = j+batch if j+batch < num_of_urls else num_of_urls+1
+            step: int = j+batch if j+batch < num_of_urls else num_of_urls+1
             all_htmls.extend(await fetch_all(urls[j:step]))
 
         return all_htmls
